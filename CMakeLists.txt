@@ -292,21 +292,12 @@ endif ()
 
 target_compile_definitions(${EXE_NAME} PRIVATE)
 
-#if ((CMAKE_GENERATOR MATCHES "Unix Makefiles") OR (CMAKE_GENERATOR MATCHES "Ninja"))
-#    add_custom_target(extract_compile_commands ALL
-#            COMMAND ${CMAKE_COMMAND}
-#            -DCOMMAND_FILE=${CMAKE_BINARY_DIR}/compile_commands.json
-#            -DPRE_CONFIGURE_FILE= "${CMAKE_SOURCE_DIR}/src/meta_build.h.in"
-#            -DPOST_CONFIGURE_FILE= "${CMAKE_BINARY_DIR}/generated/meta_build.h"
-#            -DSRC_DIR_PREFIX= "${CMAKE_SOURCE_DIR}/src"
-#            -DOUT_DIR_PREFIX= "CMakeFiles/${EXE_NAME}.dir"
-#            -P ${CMAKE_SOURCE_DIR}/cmake/extract_compile_command.cmake
-#            )
-#    add_dependencies(${EXE_NAME} extract_compile_commands)
-#else ()
-#    set(COMPILE_COMMANDS COMPILE_FLAGS)
-#endif ()
+# Enable SYnergy library
+target_compile_definitions(${EXE_NAME} PUBLIC __ENABLED_SYNERGY)
+target_link_libraries(${EXE_NAME} PUBLIC synergy)
 
 set_target_properties(${EXE_NAME} PROPERTIES OUTPUT_NAME "${BIN_NAME}")
 
+add_subdirectory(SYnergy)
 install(TARGETS ${EXE_NAME} DESTINATION bin)
+
