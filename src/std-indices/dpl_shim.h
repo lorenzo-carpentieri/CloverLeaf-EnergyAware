@@ -32,7 +32,7 @@
 
   #if ONEDPL_USE_DPCPP_BACKEND
 
-    #include <CL/sycl.hpp>
+    #include <sycl/sycl.hpp>
 
 const static auto EXEC_POLICY =
     oneapi::dpl::execution::device_policy<>{oneapi::dpl::execution::make_device_policy(cl::sycl::device{cl::sycl::default_selector_v})};

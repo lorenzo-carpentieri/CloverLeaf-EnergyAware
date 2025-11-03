@@ -20,7 +20,7 @@
 #pragma once
 
 #include "context.h"
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <iostream>
 #include <utility>
 

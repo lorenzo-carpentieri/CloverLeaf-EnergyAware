@@ -19,7 +19,7 @@
 
 #pragma once
 
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <vector>
 
 #include "shared.h"
