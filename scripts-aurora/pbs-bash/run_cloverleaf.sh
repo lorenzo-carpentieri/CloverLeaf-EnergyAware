@@ -4,8 +4,8 @@
 #PBS -l select=1
 #PBS -l walltime=00:10:00
 #PBS -l filesystems=home
-#PBS -o /home/lcarpent/energy-workspace/multinode-apps/CloverLeaf/pbs-out/output.txt
-#PBS -e /home/lcarpent/energy-workspace/multinode-apps/CloverLeaf/pbs-out/error.txt
+#PBS -o /home/lcarpent/energy-workspace/multinode-apps/CloverLeaf-EnergyAware/pbs-out/output.txt
+#PBS -e /home/lcarpent/energy-workspace/multinode-apps/CloverLeaf-EnergyAware/pbs-out/error.txt
 #PBS -q debug
 
 
