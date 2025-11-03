@@ -148,6 +148,7 @@ std::pair<T, run_args> list_and_parse(bool silent, const std::vector<T> &devices
         }
       });
     } else if(arg == "--gpu-bind"){
+
       std::vector<sycl::device> gpu_devices = sycl::device::get_devices(sycl::info::device_type::gpu);
       
       int comm_rank = -1;
@@ -160,7 +161,14 @@ std::pair<T, run_args> list_and_parse(bool silent, const std::vector<T> &devices
       int local_comm_rank = -1;
       MPI_Comm_rank(local_comm, &local_comm_rank);
       device = gpu_devices[local_comm_rank];  
-    }else {
+    }else if((arg == "--core-freq")){
+      readParam(i, "--core-freq but no core_freq was given", [&config](const auto &param) { });
+
+    }
+    else if((arg == "--log-dir")){
+      readParam(i, "--log-dir but no log_path was given", [&config](const auto &param) { });
+    }
+    else{
       std::cerr << "Unknown argument: " << arg << std::endl;
       printHelp();
       std::exit(EXIT_FAILURE);

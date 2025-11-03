@@ -45,8 +45,10 @@
 #include "read_input.h"
 #include "report.h"
 #include "start.h"
+#include <sycl/sycl.hpp>
 #include "version.h"
-
+#include "utils.hpp"
+#include <vector>
 // Output file handler
 std::ostream g_out(nullptr);
 
@@ -197,16 +199,113 @@ global_variables initialise(parallel_ &parallel, const std::vector<std::string> 
   return globals;
 }
 
-int main(int argc, char *argv[]) {
 
+void modify_core_freq(synergy::queue &q, int core_freq){
+  std::ostringstream freq_info;
+  // Change frequency for the target hw so that we can profile the application using a specific core_freq.   
+  freq_info << "Frequency " << core_freq << " MHz\n";
+  logs::log_device(freq_info.str());
+  logs::log_kernel(freq_info.str());
+
+  q.submit(0, core_freq, [&](sycl::handler& cgh) {
+    cgh.single_task([=]() {
+      // Do nothing
+    });
+  });
+  q.wait();
+  polling_freq(q, core_freq, 400);
+}
+
+int main(int argc, char *argv[]) {
+  
   MPI_Init(&argc, &argv);
   parallel_ parallel;
+  // Global rank
+  int comm_rank = -1;
+  MPI_Comm_rank(MPI_COMM_WORLD, &comm_rank);
+ // Local rank
+  MPI_Comm local_comm;
+  MPI_Comm_split_type(MPI_COMM_WORLD, MPI_COMM_TYPE_SHARED, comm_rank,
+                      MPI_INFO_NULL, &local_comm);
+
+  int local_comm_rank = -1;
+  MPI_Comm_rank(local_comm, &local_comm_rank);
+  char node_name[MPI_MAX_PROCESSOR_NAME];
+  int node_name_len = 0;
+  MPI_Get_processor_name(node_name, &node_name_len);
+
+
+
+  // Core frequency used for the entire application
+  int core_freq=0;
+  // Path to the log directory where device and kernel info will be stored
+  std::string log_dir_path;
+
+  // Core freq used for the entire application specified as command line parameter
+  if (argc >= 3){
+    core_freq = std::stoi(argv[2]);
+    log_dir_path = argv[4];
+    if (comm_rank == 0){
+      std::cout << "Target core freq: " << core_freq << std::endl;
+    }
+  }
+  else{
+    std::cout<< "Usage: ./exe <core_freq> <path_to_log_dir>" <<std::endl;
+  }
+  // Create SYnergy queue
+  std::vector<sycl::device> gpu_devices = sycl::device::get_devices(sycl::info::device_type::gpu);
+  synergy::queue q(gpu_devices[local_comm_rank % gpu_devices.size()]);
+
+  logs::init_log_files(comm_rank, log_dir_path);
+  modify_core_freq(q, core_freq); // Change frequency for each gpu associated to a local rank.
+  
+  double init_energy_start = q.device_energy_consumption();
+
+  auto start = std::chrono::high_resolution_clock::now();
+  // Init phase
   global_variables config = initialise(parallel, std::vector<std::string>(argv + 1, argv + argc));
+  
+  auto end = std::chrono::high_resolution_clock::now();
+  double init_energy_end = q.device_energy_consumption();
+
+  auto initialise_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  
+  
+  double total_phase_init = aggregate_energy_values(init_energy_start, init_energy_end);
+  logs::log_device(logs::gpu_energy_str("init", init_energy_end-init_energy_start)); // Energy for single gpu
+
+  if (parallel.boss) {
+    logs::log_device(logs::gpus_energy_all_str("init", total_phase_init)); // Energy for all gpus
+  }
+
   if (parallel.boss) {
     std::cout << " Launching hydro" << std::endl;
   }
+
+
+  start = std::chrono::high_resolution_clock::now();
+  double hydro_energy_start = q.device_energy_consumption();
   hydro(config, parallel);
   finalise(config);
+  double hydro_energy_end= q.device_energy_consumption();
+  double total_phase_hydro = aggregate_energy_values(hydro_energy_start, hydro_energy_end);
+  end = std::chrono::high_resolution_clock::now();
+  auto hydro_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count(); 
+  
+  logs::log_device(logs::gpu_energy_str("hydro", hydro_energy_end-hydro_energy_start)); // Energy for single gpu
+  logs::log_device(logs::gpu_time_str("hydro", hydro_time)); // Energy for single gpu
+
+  double total_time_hydro = aggregate_time_values(hydro_time);  
+
+  if (parallel.boss)
+  {
+    logs::log_device(logs::gpus_energy_all_str("hydro", total_phase_hydro)); // Energy for all gpus
+    logs::log_device(logs::gpus_time_all_str("hydro", total_time_hydro)); // Time for all gpus
+  }
+  
+  
+
+  logs::close_log_files();
   MPI_Finalize();
 
   if (parallel.boss) {
@@ -214,5 +313,7 @@ int main(int argc, char *argv[]) {
               << " - Problem: " << (config.config.test_problem == 0 ? "none" : std::to_string(config.config.test_problem)) << "\n"
               << " - Outcome: " << (config.report_test_fail ? "FAILED" : "PASSED") << std::endl;
   }
+
+
   return config.report_test_fail ? EXIT_FAILURE : EXIT_SUCCESS;
 }
