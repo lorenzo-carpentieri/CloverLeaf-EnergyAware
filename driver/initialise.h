@@ -147,7 +147,20 @@ std::pair<T, run_args> list_and_parse(bool silent, const std::vector<T> &devices
           std::exit(EXIT_FAILURE);
         }
       });
-    } else {
+    } else if(arg == "--gpu-bind"){
+      std::vector<sycl::device> gpu_devices = sycl::device::get_devices(sycl::info::device_type::gpu);
+      
+      int comm_rank = -1;
+      MPI_Comm_rank(MPI_COMM_WORLD, &comm_rank);
+
+      MPI_Comm local_comm;
+      MPI_Comm_split_type(MPI_COMM_WORLD, MPI_COMM_TYPE_SHARED, comm_rank,
+                          MPI_INFO_NULL, &local_comm);
+
+      int local_comm_rank = -1;
+      MPI_Comm_rank(local_comm, &local_comm_rank);
+      device = gpu_devices[local_comm_rank];  
+    }else {
       std::cerr << "Unknown argument: " << arg << std::endl;
       printHelp();
       std::exit(EXIT_FAILURE);
