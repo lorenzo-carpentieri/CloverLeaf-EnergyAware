@@ -26,7 +26,7 @@
 //  it to the start of step data, ready for the corrector.
 //  Note that this does not seem necessary in this proxy-app but should be
 //  left in to remain relevant to the full method.
-void revert_kernel(sycl::queue &queue, int x_min, int x_max, int y_min, int y_max, clover::Buffer2D<double> density0,
+void revert_kernel(synergy::queue &queue, int x_min, int x_max, int y_min, int y_max, clover::Buffer2D<double> density0,
                    clover::Buffer2D<double> density1, clover::Buffer2D<double> energy0, clover::Buffer2D<double> energy1) {
 
   // DO k=y_min,y_max

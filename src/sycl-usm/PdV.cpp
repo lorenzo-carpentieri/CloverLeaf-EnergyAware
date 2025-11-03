@@ -33,7 +33,7 @@
 //  change on cell volume due to the velocity gradients in a cell. The time
 //  level of the velocity data depends on whether it is invoked as the
 //  predictor or corrector.
-void PdV_kernel(sycl::queue &queue, bool predict, int x_min, int x_max, int y_min, int y_max, double dt, clover::Buffer2D<double> &xarea,
+void PdV_kernel(synergy::queue &queue, bool predict, int x_min, int x_max, int y_min, int y_max, double dt, clover::Buffer2D<double> &xarea,
                 clover::Buffer2D<double> &yarea, clover::Buffer2D<double> &volume, clover::Buffer2D<double> &density0,
                 clover::Buffer2D<double> &density1, clover::Buffer2D<double> &energy0, clover::Buffer2D<double> &energy1,
                 clover::Buffer2D<double> &pressure, clover::Buffer2D<double> &viscosity, clover::Buffer2D<double> &xvel0,

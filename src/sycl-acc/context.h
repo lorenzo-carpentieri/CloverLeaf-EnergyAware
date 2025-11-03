@@ -18,8 +18,8 @@
  */
 
 #pragma once
-
 #include <sycl/sycl.hpp>
+#include <synergy.hpp>
 #include <vector>
 
 #include "shared.h"
@@ -30,7 +30,7 @@ using sycl::accessor;
 using sycl::buffer;
 using sycl::handler;
 using sycl::id;
-using sycl::queue;
+using synergy::queue;
 using sycl::range;
 
 constexpr sycl::access::mode R = sycl::access::mode::read;
@@ -64,7 +64,7 @@ template <typename T, int N, sycl::access::mode mode> struct Accessor {
 
 struct chunk_context {};
 struct context {
-  sycl::queue queue;
+  synergy::queue queue;
 };
 
 template <typename T> struct Buffer1D {
@@ -223,7 +223,7 @@ template <typename nameT, class functorT> static inline void par_ranged(sycl::ha
 }
 
 // delegates to queue.submit(cgf), handles blocking submission if enable
-template <typename T> static void execute(sycl::queue &queue, T cgf) {
+template <typename T> static void execute(synergy::queue &queue, T cgf) {
   try {
     queue.submit(cgf);
 #if defined(SYCL_DEBUG) || defined(SYNC_KERNELS)

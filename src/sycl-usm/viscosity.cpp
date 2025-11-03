@@ -26,7 +26,7 @@
 //  smooth out shock front and prevent oscillations around discontinuities.
 //  Only cells in compression will have a non-zero value.
 
-void viscosity_kernel(sycl::queue &queue, int x_min, int x_max, int y_min, int y_max, clover::Buffer1D<double> &celldx,
+void viscosity_kernel(synergy::queue &queue, int x_min, int x_max, int y_min, int y_max, clover::Buffer1D<double> &celldx,
                       clover::Buffer1D<double> &celldy, clover::Buffer2D<double> &density0, clover::Buffer2D<double> &pressure,
                       clover::Buffer2D<double> &viscosity, clover::Buffer2D<double> &xvel0, clover::Buffer2D<double> &yvel0) {
 

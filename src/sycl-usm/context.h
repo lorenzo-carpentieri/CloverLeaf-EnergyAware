@@ -18,8 +18,8 @@
  */
 
 #pragma once
-
 #include <sycl/sycl.hpp>
+#include <synergy.hpp>
 #include <iostream>
 #include <utility>
 
@@ -33,7 +33,7 @@ namespace clover {
 
 struct chunk_context {};
 struct context {
-  sycl::queue queue;
+  synergy::queue queue;
 };
 
 template <typename T> struct Buffer1D {
@@ -79,14 +79,14 @@ template <typename T> struct Buffer2D {
 };
 template <typename T> using StagingBuffer1D = Buffer1D<T> &;
 
-template <typename T> void free(sycl::queue &q, T &&b) { sycl::free(b.data, q); }
+template <typename T> void free(synergy::queue &q, T &&b) { sycl::free(b.data, q); }
 
-template <typename T, typename... Ts> void free(sycl::queue &q, T &&t, Ts &&...ts) {
+template <typename T, typename... Ts> void free(synergy::queue &q, T &&t, Ts &&...ts) {
   free(q, t);
   free(q, std::forward<Ts>(ts)...);
 }
 
-template <class F> constexpr void par_ranged1(sycl::queue &q, const Range1d &range, F functor) {
+template <class F> constexpr void par_ranged1(synergy::queue &q, const Range1d &range, F functor) {
   auto event = q.parallel_for(sycl::range<1>(range.size), [=](sycl::id<1> idx) { functor(range.from + idx[0]); });
 #ifdef SYNC_KERNELS
   event.wait_and_throw();
@@ -94,7 +94,7 @@ template <class F> constexpr void par_ranged1(sycl::queue &q, const Range1d &ran
 }
 
 // delegates to parallel_for, handles flipping if enabled
-template <class functorT> static inline void par_ranged2(sycl::queue &q, const Range2d &range, functorT functor) {
+template <class functorT> static inline void par_ranged2(synergy::queue &q, const Range2d &range, functorT functor) {
 
 #define RANGE2D_NORMAL 0x01
 #define RANGE2D_LINEAR 0x02

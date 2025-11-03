@@ -24,7 +24,7 @@
 //  @author Wayne Gaudin
 //  @details Performs a second order advective remap using van-Leer limiting
 //  with directional splitting.
-void advec_cell_kernel(sycl::queue &queue, int x_min, int x_max, int y_min, int y_max, int dir, int sweep_number,
+void advec_cell_kernel(synergy::queue &queue, int x_min, int x_max, int y_min, int y_max, int dir, int sweep_number,
                        clover::Buffer1D<double> vertexdx, clover::Buffer1D<double> vertexdy, clover::Buffer2D<double> volume,
                        clover::Buffer2D<double> density1, clover::Buffer2D<double> energy1, clover::Buffer2D<double> mass_flux_x,
                        clover::Buffer2D<double> vol_flux_x, clover::Buffer2D<double> mass_flux_y, clover::Buffer2D<double> vol_flux_y,

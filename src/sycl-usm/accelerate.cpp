@@ -19,13 +19,13 @@
 
 #include "accelerate.h"
 #include "context.h"
-#include "timer.h"
+#include "timer.h"    
 
 // @brief Fortran acceleration kernel
 // @author Wayne Gaudin
 // @details The pressure and viscosity gradients are used to update the
 // velocity field.
-void accelerate_kernel(sycl::queue &queue, int x_min, int x_max, int y_min, int y_max, double dt, clover::Buffer2D<double> xarea,
+void accelerate_kernel(synergy::queue &queue, int x_min, int x_max, int y_min, int y_max, double dt, clover::Buffer2D<double> xarea,
                        clover::Buffer2D<double> yarea, clover::Buffer2D<double> volume, clover::Buffer2D<double> density0,
                        clover::Buffer2D<double> pressure, clover::Buffer2D<double> viscosity, clover::Buffer2D<double> xvel0,
                        clover::Buffer2D<double> yvel0, clover::Buffer2D<double> xvel1, clover::Buffer2D<double> yvel1) {

@@ -25,7 +25,7 @@
 //  @author Wayne Gaudin
 //  @details Copies all of the final end of step filed data to the begining of
 //  step data, ready for the next timestep.
-void reset_field_kernel(sycl::queue &queue, int x_min, int x_max, int y_min, int y_max, clover::Buffer2D<double> density0,
+void reset_field_kernel(synergy::queue &queue, int x_min, int x_max, int y_min, int y_max, clover::Buffer2D<double> density0,
                         clover::Buffer2D<double> density1, clover::Buffer2D<double> energy0, clover::Buffer2D<double> energy1,
                         clover::Buffer2D<double> xvel0, clover::Buffer2D<double> xvel1, clover::Buffer2D<double> yvel0,
                         clover::Buffer2D<double> yvel1) {

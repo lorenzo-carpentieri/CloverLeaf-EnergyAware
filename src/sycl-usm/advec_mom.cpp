@@ -26,7 +26,7 @@
 //  using van-Leer limiting and directional splitting.
 //  Note that although pre_vol is only set and not used in the update, please
 //  leave it in the method.
-void advec_mom_kernel(sycl::queue &queue, int x_min, int x_max, int y_min, int y_max, clover::Buffer2D<double> vel1,
+void advec_mom_kernel(synergy::queue &queue, int x_min, int x_max, int y_min, int y_max, clover::Buffer2D<double> vel1,
                       clover::Buffer2D<double> mass_flux_x, clover::Buffer2D<double> vol_flux_x, clover::Buffer2D<double> mass_flux_y,
                       clover::Buffer2D<double> vol_flux_y, clover::Buffer2D<double> volume, clover::Buffer2D<double> density1,
                       clover::Buffer2D<double> node_flux, clover::Buffer2D<double> node_mass_post, clover::Buffer2D<double> node_mass_pre,

@@ -24,7 +24,7 @@
 #include "update_halo.h"
 #include "update_tile_halo.h"
 
-void update_halo_kernel_2(sycl::queue &queue, int x_min, int x_max, int y_min, int y_max, const std::array<int, 4> &chunk_neighbours,
+void update_halo_kernel_2(synergy::queue &queue, int x_min, int x_max, int y_min, int y_max, const std::array<int, 4> &chunk_neighbours,
                           const std::array<int, 4> &tile_neighbours, field_type &field, const int fields[NUM_FIELDS], int depth) {
 
   if (fields[field_xvel0] == 1) {

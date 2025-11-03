@@ -21,6 +21,7 @@
 
 #include "context.h"
 #include <sycl/sycl.hpp>
+#include <synergy.hpp>
 #include <iostream>
 #include <utility>
 
@@ -47,7 +48,7 @@ template <typename T, typename U, typename C> struct local_reducer {
 template <typename nameT, size_t dimension, class RangeTpe, class LocalType, class LocalAllocator = std::nullptr_t,
           class Empty = std::nullptr_t, class Functor = std::nullptr_t, class BinaryOp = std::nullptr_t, class Finaliser = std::nullptr_t,
           class RangeLengthFn = std::nullptr_t, class RangeIdFn = std::nullptr_t>
-static inline void par_reduce_nd_impl(sycl::queue &q, RangeTpe range, RangeLengthFn lengthFn, RangeIdFn rangeIdFn, LocalAllocator allocator,
+static inline void par_reduce_nd_impl(synergy::queue &q, RangeTpe range, RangeLengthFn lengthFn, RangeIdFn rangeIdFn, LocalAllocator allocator,
                                       Empty empty, Functor functor, BinaryOp combiner, Finaliser finaliser) {
 
   auto dev = q.get_device();
@@ -123,7 +124,7 @@ static inline void par_reduce_nd_impl(sycl::queue &q, RangeTpe range, RangeLengt
 
 template <typename nameT, class LocalType, class LocalAllocator = std::nullptr_t, class Empty = std::nullptr_t,
           class Functor = std::nullptr_t, class BinaryOp = std::nullptr_t, class Finaliser = std::nullptr_t>
-static inline void par_reduce_2d(sycl::queue &q, const clover::Range2d &range, LocalAllocator allocator, Empty empty, Functor functor,
+static inline void par_reduce_2d(synergy::queue &q, const clover::Range2d &range, LocalAllocator allocator, Empty empty, Functor functor,
                                  BinaryOp combiner, Finaliser finaliser) {
 #ifdef SYCL_DEBUG
   std::cout << "par_reduce_2d " << range << "\n";
@@ -141,7 +142,7 @@ static inline void par_reduce_2d(sycl::queue &q, const clover::Range2d &range, L
 // applies a 1d reduction
 template <typename nameT, class LocalType, class LocalAllocator = std::nullptr_t, class Empty = std::nullptr_t,
           class Functor = std::nullptr_t, class BinaryOp = std::nullptr_t, class Finaliser = std::nullptr_t>
-static inline void par_reduce_1d(sycl::queue &q, const clover::Range1d &range, LocalAllocator allocator, Empty empty, Functor functor,
+static inline void par_reduce_1d(synergy::queue &q, const clover::Range1d &range, LocalAllocator allocator, Empty empty, Functor functor,
                                  BinaryOp combiner, Finaliser finaliser) {
 #ifdef SYCL_DEBUG
   std::cout << "par_reduce_1d " << range << "\n";
